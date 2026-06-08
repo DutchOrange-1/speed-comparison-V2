@@ -1,17 +1,20 @@
-[![CI](https://github.com/niklas-heer/speed-comparison/actions/workflows/ci.yml/badge.svg)](https://github.com/niklas-heer/speed-comparison/actions/workflows/ci.yml)
+<!-- [![CI](https://github.com/niklas-heer/speed-comparison/actions/workflows/ci.yml/badge.svg)](https://github.com/niklas-heer/speed-comparison/actions/workflows/ci.yml)
 
-![plot](https://niklas-heer.github.io/speed-comparison/history/latest/combined_results.png "Speed comparison of programming languages")
+![plot](https://niklas-heer.github.io/speed-comparison/history/latest/combined_results.png "Speed comparison of programming languages") -->
 
 ---
 
-# Speed comparison of programming languages
+# Speed comparison of programming languages - V2
+
+This is an adaptation of the original speed comparison test, but sadly it seems like something happen to Niklas-Heer, as he disappeared from Github. Hope he is alright. 
+<br>
 
 This projects tries to compare the speed of different programming languages.
 In this project we don't really care about getting a precise calculation of pi. We only want to see how fast are the programming languages doing. <br />
 It uses an implementation of the [Leibniz formula for π](https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80) to do the comparison. <br />
 Here is a video which explains how it works: [Calculating π by hand](https://www.youtube.com/watch?v=HrRMnzANHHs)
 
-You can find the results here: https://niklas-heer.github.io/speed-comparison/
+You can find the original at : https://niklas-heer.github.io/speed-comparison/
 
 ## Disclaimer
 
@@ -43,7 +46,20 @@ The benchmark measures **single-threaded computational performance**. To keep co
 [<img src="https://github.com/niklas-heer/speed-comparison/raw/master/assets/how-to-contribute_thumbnail.png" width="50%">](https://www.youtube.com/watch?v=ksV4WObYSiQ "Contributing to speed comparison ") -->
 
 ## Used hardware
+What ever machine I have acess to, which would typically be my CPU:
 
+	12th Gen Intel(R) Core(TM) i7-12650H
+
+	Base speed:	2.30 GHz
+	Sockets:	1
+	Cores:	10
+	Logical processors:	16
+	Virtualization:	Enabled
+	L1 cache:	864 KB
+	L2 cache:	9.5 MB
+	L3 cache:	24.0 MB
+
+<!-- 
 The benchmarks run on Ubicloud standard-4 runners:
 
     CPU: 4 vCPUs (2 physical cores) on AMD EPYC 9454P processors
@@ -51,7 +67,7 @@ The benchmarks run on Ubicloud standard-4 runners:
     Storage: NVMe SSDs
     OS: Ubuntu 24.04
 
-See [Ubicloud Runner Types](https://www.ubicloud.com/docs/github-actions-integration/runner-types) for more details.
+See [Ubicloud Runner Types](https://www.ubicloud.com/docs/github-actions-integration/runner-types) for more details. -->
 
 ## Run it yourself
 
