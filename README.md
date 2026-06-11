@@ -262,3 +262,57 @@ For creating [hyperfine](https://github.com/sharkdp/hyperfine) which is used for
 #### Thomas
 
 This projects takes inspiration from [Thomas](https://www.thomaschristlieb.de) who did a similar comparison [on his blog](https://www.thomaschristlieb.de/performance-vergleich-zwischen-verschiedenen-programmiersprachen-und-systemen/).
+
+
+# Installing Earthly
+I found the documentation on this quite hard, hence here is what I used:
+
+# Install Earthly Manually on Linux
+
+## 1. Verify Docker Installation
+
+Ensure Docker is installed and running:
+
+```bash
+docker --version
+```
+
+## 2. Download the Latest Earthly Binary
+
+```bash
+wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
+```
+
+Alternatively:
+
+```bash
+curl -L -o earthly-linux-amd64 \
+https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
+```
+
+## 3. Make the Binary Executable and Install It
+
+```bash
+chmod +x earthly-linux-amd64
+sudo mv earthly-linux-amd64 /usr/local/bin/earthly
+```
+
+## 4. Verify the Installation
+
+```bash
+earthly --version
+```
+
+## 5. Bootstrap Earthly
+
+```bash
+sudo earthly bootstrap --with-autocomplete
+```
+
+## 6. Test the Installation
+
+```bash
+earthly github.com/earthly/hello-world+hello
+```
+
+If the command completes successfully, Earthly has been installed correctly.
