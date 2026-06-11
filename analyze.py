@@ -210,9 +210,9 @@ def create_neon_cmap():
     colors = [
         "#f7768e",  # Tokyo Night red/pink (low accuracy)
         "#ff007c",  # Hot pink/magenta
-        "#bb9af7",  # Tokyo Night purple
-        "#7aa2f7",  # Tokyo Night blue
-        "#7dcfff",  # Tokyo Night cyan (high accuracy)
+        "#ff9e2f",  # Tokyo Night purple
+        "#f09138",  # Tokyo Night blue
+        "#ef973a",  # Tokyo Night cyan (high accuracy)
     ]
     return LinearSegmentedColormap.from_list("neon", colors, N=256)
 
@@ -358,7 +358,7 @@ def plot_results(
         va="top",
         fontsize=10,
         fontweight="bold",
-        color="#7aa2f7",
+        color="#f7c17a",
         fontfamily="monospace",
         transform=fig.transFigure,
     )
