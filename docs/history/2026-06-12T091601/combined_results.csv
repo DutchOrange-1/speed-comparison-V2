@@ -1,0 +1,4 @@
+name,target,version,median,min,max,accuracy
+C (clang),c-clang,21.1.2,1076.31,1060.18,1077.62,9.4985
+C (gcc),c,15.2.0,1105.91,1063.51,1160.48,9.4943
+Rust,rust,1.92.0,1338.08,1332.1,1354.0,9.4979
