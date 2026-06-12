@@ -49,17 +49,16 @@ The benchmark measures **single-threaded computational performance**. To keep co
 ## Used hardware
 What ever machine I have acess to, which would typically be my CPU:
 
-	12th Gen Intel(R) Core(TM) i7-12650H
-
-	Base speed:	2.30 GHz
-	Sockets:	1
-	Cores:	10
-	Logical processors:	16
-	Virtualization:	Enabled
-	L1 cache:	864 KB
-	L2 cache:	9.5 MB
-	L3 cache:	24.0 MB
-
+```
+	Architecture:                x86_64
+  	CPU op-mode(s):            32-bit, 64-bit
+  	Address sizes:             39 bits physical, 48 bits virtual
+  	Byte Order:                Little Endian
+	CPU(s):                      8
+  	On-line CPU(s) list:       0-7
+	Vendor ID:                   GenuineIntel
+  	Model name:                Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+```
 <!-- 
 The benchmarks run on Ubicloud standard-4 runners:
 
