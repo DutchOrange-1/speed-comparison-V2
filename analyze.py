@@ -208,8 +208,8 @@ def load_results(folder: str) -> pd.DataFrame:
 def create_neon_cmap():
     """Create a neon colormap (Tokyo Night style) - pink to blue (inverted for variety)."""
     colors = [
-        "#f7768e",  # Tokyo Night red/pink (low accuracy)
-        "#ff007c",  # Hot pink/magenta
+        "#1c04fc",  # Tokyo Night red/pink (low accuracy)
+        "#6858f8",  # Hot pink/magenta
         "#ff9e2f",  # Tokyo Night purple
         "#f09138",  # Tokyo Night blue
         "#ef973a",  # Tokyo Night cyan (high accuracy)

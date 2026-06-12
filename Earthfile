@@ -137,8 +137,8 @@ collect-data:
   BUILD +cpp
   BUILD +cpp-avx2
   BUILD +cpp-clang
-  BUILD +d
-  BUILD +d-ldc 
+  # BUILD +d
+  # BUILD +d-ldc 
   BUILD +go
   BUILD +nim
   BUILD +odin
@@ -196,7 +196,7 @@ collect-data:
   ##BUILD +haxe
   BUILD +janet-compiled
   ##BUILD +julia
-  BUILD +objc
+  # BUILD +objc
   BUILD +pascal
   BUILD +pony
   BUILD +pony-nightly
