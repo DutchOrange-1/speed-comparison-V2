@@ -55,7 +55,15 @@ analysis:
   COPY ./*.py ./
   COPY ./src/rounds.txt ./
   COPY --dir results ./
-  RUN uv pip install --system -e .
+  # RUN uv pip install --system -e .
+  # RUN uv pip install --system -e . --only-binary=:all:
+  RUN uv pip install --system \
+    pandas \
+    matplotlib \
+    seaborn \
+    numpy \
+    pillow \
+    cairosvg
   RUN --no-cache python analyze.py --folder ./results/ --out ./ --rounds ./rounds.txt
   SAVE ARTIFACT ./*.csv AS LOCAL ./results/
   SAVE ARTIFACT ./*.png AS LOCAL ./results/
