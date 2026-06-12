@@ -129,6 +129,15 @@ alpine:
 # AGGREGATE TARGETS
 # ============================================================================
 
+publish:
+    FROM python:3.11-slim
+    COPY --dir results ./
+    COPY --dir docs ./
+    COPY publish.py ./
+    RUN python publish.py --results ./results/ --docs ./docs/
+    SAVE ARTIFACT ./results AS LOCAL ./results
+    SAVE ARTIFACT ./docs AS LOCAL ./docs
+
 collect-data:
   BUILD +build
   # Systems languages
