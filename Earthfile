@@ -273,7 +273,7 @@ collect-data-2:
   BUILD +ruby
   # JavaScript runtimes
   BUILD +bunjs
-  BUILD +deno
+  #BUILD +deno
   BUILD +nodejs
   # Other compiled languages
   BUILD +ada
