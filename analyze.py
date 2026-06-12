@@ -195,10 +195,10 @@ def load_results(folder: str) -> pd.DataFrame:
             data["target"].append(target)
             data["version"].append(result["Version"])
             # Convert to milliseconds
-            data["median"].append(round(parse_time_value(result["Median"]) * 1000, 2))
-            data["max"].append(round(parse_time_value(result["Max"]) * 1000, 2))
-            data["min"].append(round(parse_time_value(result["Min"]) * 1000, 2))
-            data["accuracy"].append(round(result["Accuracy"], 4))
+            data["median"].append(round(parse_time_value(result["Median"]) * 1000, 5))
+            data["max"].append(round(parse_time_value(result["Max"]) * 1000, 5))
+            data["min"].append(round(parse_time_value(result["Min"]) * 1000, 5))
+            data["accuracy"].append(round(result["Accuracy"], 6))
 
     df = pd.DataFrame(data)
     df.sort_values(by=["min"], inplace=True, ascending=True)
@@ -232,35 +232,35 @@ def create_neon_cmap():
     )
     return LinearSegmentedColormap.from_list("neon", colors, N=256)
 
-def create_speed_cmap():
+def create_accurancy_cmap():
     colors = [
-        "#7f2704",
-        "#a63603",
+        # "#7f2704",
+        # "#a63603",
         "#d94801",
         "#f16913",
         "#fd8d3c",
         "#fdae6b",
         "#fdd0a2",
 
-        "#deebf7",
-        "#c6dbef",
-        "#9ecae1",
-        "#6baed6",
+        # "#deebf7",
+        # "#c6dbef",
+        # "#9ecae1",
+        # "#6baed6",
         "#4292c6",
-        "#2171b5",
-        "#08519c",
-        "#08306b",
+        # "#2171b5",
+        # "#08519c",
+        # "#08306b",
     ]
 
     return LinearSegmentedColormap.from_list(
-        "speed",
+        "accuracy",
         colors,
         N=512,
     )
 
 def create_color_mapping(values: np.ndarray):
     """Create a color mapping based on values using neon colormap."""
-    cmap = create_speed_cmap()
+    cmap = create_accurancy_cmap()
 
     # Invert because smaller execution times are better
     norm = LogNorm(
@@ -280,7 +280,7 @@ def format_time(ms: float) -> str:
     """Format milliseconds into a readable string."""
     if ms >= 1000:
         return f"{ms / 1000:.2f}s"
-    return f"{ms:.1f}ms"
+    return f"{ms:.4f}ms"
 
 
 def trim_text(text: str, max_len: int = 60) -> str:
@@ -314,8 +314,8 @@ def plot_results(
     df["display_name"] = df["name"] + "  v" + df["version"].astype(str)
 
     # Create color mapping based on accuracy (higher = more purple)
-    # colors, norm, cmap = create_color_mapping(df["accuracy"].values)
-    colors, norm, cmap = create_color_mapping(df["min"].values)
+    colors, norm, cmap = create_color_mapping(df["accuracy"].values)
+    # colors, norm, cmap = create_color_mapping(df["min"].values)
 
     # Create horizontal bar chart
     y_pos = np.arange(len(df))
@@ -571,10 +571,10 @@ def build_combined_results(raw_results: list[dict]) -> list[dict]:
                 "name": result.get("Language", ""),
                 "target": result.get("Target", ""),
                 "version": result.get("Version", ""),
-                "median": round(parse_time_value(result.get("Median", 0)) * 1000, 2),
-                "min": round(parse_time_value(result.get("Min", 0)) * 1000, 2),
-                "max": round(parse_time_value(result.get("Max", 0)) * 1000, 2),
-                "accuracy": round(float(result.get("Accuracy", 0)), 4),
+                "median": round(parse_time_value(result.get("Median", 0)) * 1000, 5),
+                "min": round(parse_time_value(result.get("Min", 0)) * 1000, 5),
+                "max": round(parse_time_value(result.get("Max", 0)) * 1000, 5),
+                "accuracy": round(float(result.get("Accuracy", 0)), 6),
                 "environment": result.get("Environment", {}),
                 "compile": result.get("Compile", ""),
                 "run": result.get("Run", ""),

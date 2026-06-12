@@ -179,13 +179,13 @@ collect-data:
   BUILD +sbcl-simd
   # Scripting languages
   BUILD +cpython
-  BUILD +cpython-numpy
+  # BUILD +cpython-numpy
   BUILD +cpython-numba
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  #BUILD +octave
-  BUILD +octave-vectorised
+  # BUILD +octave
+  # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
   BUILD +pypy
