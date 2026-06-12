@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import LinearSegmentedColormap, Normalize
+from matplotlib.colors import LinearSegmentedColormap, Normalize, LogNorm
 from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from PIL import Image, ImageFilter, ImageOps
 
@@ -208,20 +208,72 @@ def load_results(folder: str) -> pd.DataFrame:
 def create_neon_cmap():
     """Create a neon colormap (Tokyo Night style) - pink to blue (inverted for variety)."""
     colors = [
-        "#1c04fc",  # Tokyo Night red/pink (low accuracy)
-        "#6858f8",  # Hot pink/magenta
-        "#ff9e2f",  # Tokyo Night purple
-        "#f09138",  # Tokyo Night blue
-        "#ef973a",  # Tokyo Night cyan (high accuracy)
+        "#7f2704",  # very dark orange (fastest)
+        "#a63603",
+        "#d94801",
+        "#f16913",
+        "#fd8d3c",
+        "#fdae6b",
+        "#fdd0a2",  # light orange
+
+        "#deebf7",  # very light blue
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#4292c6",
+        "#2171b5",
+        "#08519c",
+        "#08306b",  # dark blue (slowest)
     ]
+    cmap = LinearSegmentedColormap.from_list(
+        "speed_gradient",
+        colors,
+        N=512,
+    )
     return LinearSegmentedColormap.from_list("neon", colors, N=256)
 
+def create_speed_cmap():
+    colors = [
+        "#7f2704",
+        "#a63603",
+        "#d94801",
+        "#f16913",
+        "#fd8d3c",
+        "#fdae6b",
+        "#fdd0a2",
+
+        "#deebf7",
+        "#c6dbef",
+        "#9ecae1",
+        "#6baed6",
+        "#4292c6",
+        "#2171b5",
+        "#08519c",
+        "#08306b",
+    ]
+
+    return LinearSegmentedColormap.from_list(
+        "speed",
+        colors,
+        N=512,
+    )
 
 def create_color_mapping(values: np.ndarray):
     """Create a color mapping based on values using neon colormap."""
-    norm = Normalize(vmin=values.min(), vmax=values.max())
-    cmap = create_neon_cmap()
-    return [cmap(norm(v)) for v in values], norm, cmap
+    cmap = create_speed_cmap()
+
+    # Invert because smaller execution times are better
+    norm = LogNorm(
+        vmin=values.min(),
+        vmax=values.max(),
+    )
+
+    normalized = norm(values)
+
+    # Reverse so fast = orange, slow = blue
+    colors = [cmap(1 - x) for x in normalized]
+
+    return colors, norm, cmap
 
 
 def format_time(ms: float) -> str:
@@ -262,7 +314,8 @@ def plot_results(
     df["display_name"] = df["name"] + "  v" + df["version"].astype(str)
 
     # Create color mapping based on accuracy (higher = more purple)
-    colors, norm, cmap = create_color_mapping(df["accuracy"].values)
+    # colors, norm, cmap = create_color_mapping(df["accuracy"].values)
+    colors, norm, cmap = create_color_mapping(df["min"].values)
 
     # Create horizontal bar chart
     y_pos = np.arange(len(df))
