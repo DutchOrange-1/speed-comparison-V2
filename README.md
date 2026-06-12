@@ -6,8 +6,6 @@
 
 # Speed comparison of programming languages - V2
 
-This is an adaptation of the original speed comparison test, but sadly it seems like something happen to Niklas-Heer, as he disappeared from Github. Hope he is alright. 
-<br>
 
 This projects tries to compare the speed of different programming languages.
 In this project we don't really care about getting a precise calculation of pi. We only want to see how fast are the programming languages doing. <br />
@@ -15,6 +13,9 @@ It uses an implementation of the [Leibniz formula for π](https://en.wikipedia.o
 Here is a video which explains how it works: [Calculating π by hand](https://www.youtube.com/watch?v=HrRMnzANHHs)
 
 You can find the original at : https://niklas-heer.github.io/speed-comparison/
+
+![plot](./docs/history/latest/combined_results.png "Speed comparison of programming languages")
+
 
 ## Disclaimer
 
@@ -316,3 +317,6 @@ earthly github.com/earthly/hello-world+hello
 ```
 
 If the command completes successfully, Earthly has been installed correctly.
+
+
+If you are still confused, check out [The Claude MD file](./CLAUDE.md) as it seems to contain more infor that the main one.  
