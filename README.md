@@ -320,3 +320,9 @@ If the command completes successfully, Earthly has been installed correctly.
 
 
 If you are still confused, check out [The Claude MD file](./CLAUDE.md) as it seems to contain more infor that the main one.  
+
+# Extra commands:
+To publish the data:
+```bash
+python3 publish.py --results ./results/ --docs ./docs/
+```
