@@ -326,5 +326,9 @@ To publish the data:
 python3 publish.py --results ./results/ --docs ./docs/
 ```
 Note for those running it on their own server, when running +all, the volume of files temprarily created is around 10-15 GB. Have this open else you will run into a error. 
-<br>
-Also, make sure to use **earthly prune** to clean up the docker containers !!!
+<br><br>
+Also, make sure to use 
+```bash
+earthly prune
+```
+to clean up the docker containers ! I have noticed after several runs, the images can build up to about 50 GB of data. 
