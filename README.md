@@ -335,5 +335,16 @@ to clean up the docker containers ! I have noticed after several runs, the image
 <br>
 I have noticed several times, that languges would fail, as they are limited due to then umber of parallel containers, this should fix this error on smaller machines:
 ```bash
-earthly config global.buildkit_max_parallelism 6
+earthly config global.buildkit_max_parallelism 4
 ```
+The above code sadly did not work for me, hence had to manually do this through a command to make it serial. 
+```bash
+earthly +systems && \
+earthly +jvm && \
+earthly +dotnet && \
+earthly +functional && \
+earthly +scripting && \
+earthly +javascript && \
+earthly +other-compiled
+```
+This is not ideal, but due to my location / wifi it seems I get flagged more easily when making multiple requests. 
