@@ -332,3 +332,8 @@ Also, make sure to use
 earthly prune
 ```
 to clean up the docker containers ! I have noticed after several runs, the images can build up to about 50 GB of data. 
+<br>
+I have noticed several times, that languges would fail, as they are limited due to then umber of parallel containers, this should fix this error on smaller machines:
+```bash
+earthly config global.buildkit_max_parallelism 6
+```
