@@ -2,7 +2,7 @@ global:
   # `buildkit_max_parallelism` corresponds with max_parallelism of buildkit.
   # Default is `20`, to turn it off set it to 0.
   # See: https://github.com/moby/buildkit/blob/81b6ff2c55565bdcb9f0dbcff52515f7c7bb429c/cmd/buildkitd/main_containerd_worker.go#L263
-  buildkit_max_parallelism: 0
+  buildkit_max_parallelism: 5
 
   # Default is `5`, to turn it off set it to 0.
   # But together with the buildkit setting it won't work so setting it to `1` is the only option.
