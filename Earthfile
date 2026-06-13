@@ -321,8 +321,6 @@ fast-check:
 # SYSTEMS LANGUAGES (C, C++, Rust, Go, Zig, etc.)
 # ============================================================================
 
-<<<<<<< Updated upstream
-=======
 x64-nasm:
     FROM ubuntu:24.04
 
@@ -363,7 +361,7 @@ x64-nasm-alpine:
       --version="nasm -v" \
       --cmd="./leibniz"
 
->>>>>>> Stashed changes
+
 c:
   FROM +alpine --src="leibniz.c"
   RUN apk add --no-cache gcc build-base
