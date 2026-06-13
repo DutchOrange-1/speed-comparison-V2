@@ -5,8 +5,6 @@
 ---
 
 # Speed comparison of programming languages - V2
-
-
 This projects tries to compare the speed of different programming languages.
 In this project we don't really care about getting a precise calculation of pi. We only want to see how fast are the programming languages doing. <br />
 It uses an implementation of the [Leibniz formula for π](https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80) to do the comparison. <br />
@@ -47,7 +45,7 @@ The benchmark measures **single-threaded computational performance**. To keep co
 [<img src="https://github.com/niklas-heer/speed-comparison/raw/master/assets/how-to-contribute_thumbnail.png" width="50%">](https://www.youtube.com/watch?v=ksV4WObYSiQ "Contributing to speed comparison ") -->
 
 ## Used hardware
-What ever machine I have acess to, which would typically be my CPU:
+What ever machine I have access to, which would typically be my CPU. These specs are of a small server I am using. 
 
 ```
 	Architecture:              	x86_64
@@ -71,27 +69,15 @@ The benchmarks run on Ubicloud standard-4 runners:
 See [Ubicloud Runner Types](https://www.ubicloud.com/docs/github-actions-integration/runner-types) for more details. -->
 
 ## Run it yourself
-
-Everything is run by a Docker container and a bash script which envokes the programs.
+Check out [Dev docs](./dev.md) on a more in depth development, plus installation on Earthly.  
+<br>
+Everything is run by a Docker container and a bash script which evokes the programs.
 
 To measure the execution time a [python package](https://pypi.python.org/pypi/lauda/1.2.0) is used.
 
 ### Requirements
 - `Docker`
 - [earthly](https://earthly.dev/)
-
-### Run everything
-Earthly allows to run everything with a single command:
-```bash
-earthly +all
-```
-This will run all tasks to collect all measurements and then run the analysis.
-
-### Collect data
-To collect data for all languages run:
-```bash
-earthly +collect-data
-```
 
 To collect data for a single language run:
 ```bash
@@ -134,17 +120,22 @@ Repository maintainers can trigger benchmarks on PRs using comments:
 /bench rust go c     # Run specific languages
 ```
 
-### Labels
+### Manuall Running of all languges
+The original commands resulted in issues with rate limits, hence I made a python script to serial execute sections of the langues, grouped on similarities. 
+```bash 
+python collect_all_data_safe.py
+```
+Check [Dev docs](./dev.md) for more details. 
+
+<!-- ### Labels
 
 - `enable-ci`: Trigger full benchmark suite on a PR
-- `skip-ci`: Skip the fast-check on a PR
+- `skip-ci`: Skip the fast-check on a PR -->
 
-## Automated Version Updates
-
-This project uses an AI-powered CI workflow to keep all programming languages up to date automatically.
-
+<!-- ## Automated Version Updates
+This project uses an AI-powered CI workflow to keep all programming languages up to date automatically. -->
+<!-- 
 ### How It Works
-
 1. **Weekly Check**: A scheduled workflow runs every Monday at 6 AM UTC
 2. **Version Detection**: Checks for new versions via:
    - Docker Hub Registry API (for official language images)
@@ -153,15 +144,15 @@ This project uses an AI-powered CI workflow to keep all programming languages up
 3. **Automated Updates**: Claude Code (via OpenRouter) updates the Earthfile with new versions
 4. **Validation**: Runs a quick benchmark to verify the update compiles and runs correctly
 5. **Breaking Changes**: If the build fails, Claude Code (Opus) researches and fixes breaking changes (up to 3 attempts)
-6. **PR Creation**: Creates a PR for review if successful, or an issue describing the failure if not
+6. **PR Creation**: Creates a PR for review if successful, or an issue describing the failure if not -->
 
-### Manual Trigger
+<!-- ### Manual Trigger
 
 You can manually trigger a version check:
 
 1. Go to **Actions** → **Version Check** → **Run workflow**
 2. Optionally specify a single language name to check only that one
-3. Enable "Dry run" to check versions without creating PRs
+3. Enable "Dry run" to check versions without creating PRs -->
 
 ### Configuration
 
@@ -264,88 +255,5 @@ For creating [hyperfine](https://github.com/sharkdp/hyperfine) which is used for
 
 This projects takes inspiration from [Thomas](https://www.thomaschristlieb.de) who did a similar comparison [on his blog](https://www.thomaschristlieb.de/performance-vergleich-zwischen-verschiedenen-programmiersprachen-und-systemen/).
 
-
-# Installing Earthly
-I found the documentation on this quite hard, hence here is what I used:
-
-# Install Earthly Manually on Linux
-
-## 1. Verify Docker Installation
-
-Ensure Docker is installed and running:
-
-```bash
-docker --version
-```
-
-## 2. Download the Latest Earthly Binary
-
-```bash
-wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
-```
-
-Alternatively:
-
-```bash
-curl -L -o earthly-linux-amd64 \
-https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
-```
-
-## 3. Make the Binary Executable and Install It
-
-```bash
-chmod +x earthly-linux-amd64
-sudo mv earthly-linux-amd64 /usr/local/bin/earthly
-```
-
-## 4. Verify the Installation
-
-```bash
-earthly --version
-```
-
-## 5. Bootstrap Earthly
-
-```bash
-sudo earthly bootstrap --with-autocomplete
-```
-
-## 6. Test the Installation
-
-```bash
-earthly github.com/earthly/hello-world+hello
-```
-
-If the command completes successfully, Earthly has been installed correctly.
-
-
-If you are still confused, check out [The Claude MD file](./CLAUDE.md) as it seems to contain more infor that the main one.  
-
-# Extra commands:
-To publish the data:
-```bash
-python3 publish.py --results ./results/ --docs ./docs/
-```
-Note for those running it on their own server, when running +all, the volume of files temprarily created is around 10-15 GB. Have this open else you will run into a error. 
-<br><br>
-Also, make sure to use 
-```bash
-earthly prune
-```
-to clean up the docker containers ! I have noticed after several runs, the images can build up to about 50 GB of data. 
-<br>
-I have noticed several times, that languges would fail, as they are limited due to then umber of parallel containers, this should fix this error on smaller machines:
-```bash
-earthly config global.buildkit_max_parallelism 4
-```
-The above code sadly did not work for me, hence had to manually do this through a command to make it serial. 
-```bash
-earthly +systems && \
-earthly +jvm && \
-earthly +dotnet && \
-earthly +functional && \
-earthly +scripting && \
-earthly +javascript && \
-earthly +other-compiled
-```
-This is not ideal, but due to my location / wifi it seems I get flagged more easily when making multiple requests. 
+#### niklas-heer
+For the original project. 
