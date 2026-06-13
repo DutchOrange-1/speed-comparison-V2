@@ -344,7 +344,7 @@ x64-nasm:
 
     DO +BENCH \
         --name="x64-nasm" \
-        --lang="x86-64 Assembly (NASM)" \
+        --lang="x64 NASM" \
         --version="nasm -v" \
         --cmd="./leibniz"
 
@@ -357,7 +357,7 @@ x64-nasm-alpine:
 
   DO +BENCH \
       --name="x64-nasm" \
-      --lang="x86-64 Assembly (NASM)" \
+      --lang="x64 NASM" \
       --version="nasm -v" \
       --cmd="./leibniz"
 
