@@ -1,8 +1,115 @@
 # Development and setup
 This document is here to show how to setup this project for local testing, and some problems I personally ran into. 
 
+# Running Earthly
+### Run everything
+Earthly allows to run everything with a single command:
+```bash
+earthly +all
+```
+This will run all tasks to collect all measurements and then run the analysis.
+
+### Collect data
+To collect data for all languages run:
+```bash
+earthly +collect-data
+```
+
+
+# Installing Earthly
+I found the documentation on this quite hard, hence here is what I used:
+
+## 1. Verify Docker Installation
+
+Ensure Docker is installed and running:
+
+```bash
+docker --version
+```
+
+## 2. Download the Latest Earthly Binary
+
+```bash
+wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
+```
+
+Alternatively:
+
+```bash
+curl -L -o earthly-linux-amd64 \
+https://github.com/earthly/earthly/releases/latest/download/earthly-linux-amd64
+```
+
+## 3. Make the Binary Executable and Install It
+
+```bash
+chmod +x earthly-linux-amd64
+sudo mv earthly-linux-amd64 /usr/local/bin/earthly
+```
+
+## 4. Verify the Installation
+
+```bash
+earthly --version
+```
+
+## 5. Bootstrap Earthly
+
+```bash
+sudo earthly bootstrap --with-autocomplete
+```
+
+## 6. Test the Installation
+
+```bash
+earthly github.com/earthly/hello-world+hello
+```
+
+If the command completes successfully, Earthly has been installed correctly.
+
+If you are still confused, check out [The Claude MD file](./CLAUDE.md) as it seems to contain more infor that the main one.  
+
+# Extra commands:
+To publish the data:
+```bash
+python3 publish.py --results ./results/ --docs ./docs/
+```
+Note for those running it on their own server, when running +all, the volume of files temprarily created is around 10-15 GB. Have this open else you will run into a error. 
+<br><br>
+Also, make sure to use:
+
+```bash
+earthly prune
+```
+to clean up the docker containers ! I have noticed after several runs, the images can build up to about 50 GB of data. 
+<br>
+I have noticed several times, that languges would fail, as they are limited due to then umber of parallel containers, this should fix this error on smaller machines:
+
+```bash
+earthly config global.buildkit_max_parallelism 4
+```
+The above code sadly did not work for me, hence had to manually do this through a command to make it serial. 
+```bash
+earthly +systems && \
+earthly +jvm && \
+earthly +dotnet && \
+earthly +functional && \
+earthly +scripting && \
+earthly +javascript && \
+earthly +other-compiled
+```
+This is not ideal, but due to my location / wifi it seems I get flagged more easily when making multiple requests. 
+<br>
+To automate this, I made the script,  [collect_all_data_safe.py](./collect_all_data_safe.py) which also logs the time, and re-executes the code if they do fail. 
+
+```bash
+python3 collect_all_data_safe.py
+```
+
+
 # Testing
-## 2 parallel 
+This was to evaluate the number of max parallelism and possible failures. 
+### 2 parallel 
 ```bash
 Successful (7):
   ✓ earthly +systems          Attempts: 1  Time: 461.8s
@@ -22,7 +129,7 @@ Ran with:
 earthly config global.buildkit_max_parallelism 2
 ```
 
-## 4 Parallel
+### 4 Parallel
 ```bash
 Successful (7):
   ✓ earthly +systems          Attempts: 1  Time: 437.9s
@@ -42,7 +149,7 @@ Ran with:
 earthly config global.buildkit_max_parallelism 4
 ```
 
-## 6 Parallel
+### 6 Parallel
 ```bash
 Successful (7):
   ✓ earthly +systems          Attempts: 2  Time: 570.3s
