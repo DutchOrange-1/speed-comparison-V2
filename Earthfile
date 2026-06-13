@@ -234,7 +234,7 @@ systems:
   BUILD +rust-nightly
   # BUILD +v
   # BUILD +zig
-  BUILD +x64-nasm
+  BUILD +x64-nasm-alpine
 
 jvm:
   BUILD +clj
