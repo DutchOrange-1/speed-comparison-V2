@@ -50,14 +50,15 @@ The benchmark measures **single-threaded computational performance**. To keep co
 What ever machine I have acess to, which would typically be my CPU:
 
 ```
-	Architecture:                x86_64
-  	CPU op-mode(s):            32-bit, 64-bit
-  	Address sizes:             39 bits physical, 48 bits virtual
-  	Byte Order:                Little Endian
-	CPU(s):                      8
-  	On-line CPU(s) list:       0-7
-	Vendor ID:                   GenuineIntel
-  	Model name:                Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+	Architecture:              	x86_64
+  	CPU op-mode(s):            	32-bit, 64-bit
+  	Address sizes:             	39 bits physical, 48 bits virtual
+	CPU(s):                    	8
+  	On-line CPU(s) list:       	0-7
+  	Model name:                	Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+	Boost: 						4.60 GHz
+	Instruction Set: 			Intel® SSE4.1, Intel® SSE4.2, Intel® AVX2
+
 ```
 <!-- 
 The benchmarks run on Ubicloud standard-4 runners:
