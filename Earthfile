@@ -64,6 +64,7 @@ analysis:
     numpy \
     pillow \
     cairosvg
+  RUN rm -f ./results/combined_results.*
   RUN --no-cache python analyze.py --folder ./results/ --out ./ --rounds ./rounds.txt
   SAVE ARTIFACT ./*.csv AS LOCAL ./results/
   SAVE ARTIFACT ./*.png AS LOCAL ./results/
@@ -146,7 +147,7 @@ collect-data:
   BUILD +cpp
   BUILD +cpp-avx2
   BUILD +cpp-clang
-  # BUILD +d
+  BUILD +d
   # BUILD +d-ldc 
   BUILD +go
   BUILD +nim
@@ -159,16 +160,16 @@ collect-data:
   BUILD +clj
   BUILD +groovy
   BUILD +java
-  # BUILD +java-graalvm
+  BUILD +java-graalvm
   BUILD +java-vecops
   BUILD +kotlin
   BUILD +scala
   #.NET languages
-  # BUILD +cs
+  BUILD +cs
   BUILD +cs-simd
   BUILD +fs
   # Functional languages
-  #BUILD +elixir
+  BUILD +elixir
   BUILD +erlang
   #BUILD +gleam
   BUILD +haskell
@@ -205,7 +206,7 @@ collect-data:
   ##BUILD +haxe
   BUILD +janet-compiled
   ##BUILD +julia
-  # BUILD +objc
+  BUILD +objc
   BUILD +pascal
   BUILD +pony
   BUILD +pony-nightly
@@ -214,39 +215,43 @@ collect-data:
   BUILD +swift-simd
   BUILD +wasm
 
-collect-data-1:
+# ==============================================
+
+systems:
   BUILD +build
-  # Systems languages
   BUILD +c
   BUILD +c-clang
   BUILD +cpp
   BUILD +cpp-avx2
   BUILD +cpp-clang
-  # BUILD +d
-  # BUILD +d-ldc 
+  BUILD +d
+  # BUILD +d-ldc
   BUILD +go
   BUILD +nim
   BUILD +odin
   BUILD +rust
   BUILD +rust-nightly
-  #BUILD +v
-  #BUILD +zig
-  # JVM languages
+  # BUILD +v
+  # BUILD +zig
+
+jvm:
   BUILD +clj
   BUILD +groovy
   BUILD +java
-  # BUILD +java-graalvm
+  BUILD +java-graalvm
   BUILD +java-vecops
   BUILD +kotlin
   BUILD +scala
-  #.NET languages
-  # BUILD +cs
+
+dotnet:
+  BUILD +cs
   BUILD +cs-simd
   BUILD +fs
-  # Functional languages
-  #BUILD +elixir
+
+functional:
+  BUILD +elixir
   BUILD +erlang
-  #BUILD +gleam
+  # BUILD +gleam
   BUILD +haskell
   BUILD +ocaml
   BUILD +chezscheme
@@ -254,9 +259,8 @@ collect-data-1:
   BUILD +sbcl
   BUILD +sbcl-simd
 
+scripting:
 
-collect-data-2:
-  # Scripting languages
   BUILD +cpython
   # BUILD +cpython-numpy
   BUILD +cpython-numba
@@ -271,20 +275,23 @@ collect-data-2:
   BUILD +r
   BUILD +raku
   BUILD +ruby
-  # JavaScript runtimes
+
+javascript:
   BUILD +bunjs
-  #BUILD +deno
+  BUILD +deno
   BUILD +nodejs
-  # Other compiled languages
+
+other-compiled:
+
   BUILD +ada
   BUILD +crystal
   BUILD +dart
   BUILD +dart-aot
   BUILD +fortran
-  ##BUILD +haxe
+  # BUILD +haxe
   BUILD +janet-compiled
-  ##BUILD +julia
-  # BUILD +objc
+  # BUILD +julia
+  BUILD +objc
   BUILD +pascal
   BUILD +pony
   BUILD +pony-nightly
@@ -293,6 +300,9 @@ collect-data-2:
   BUILD +swift-simd
   BUILD +wasm
 
+
+# ==============================================
+# earthly +jvm && earthly +dotent
 
 all:
   BUILD +collect-data
