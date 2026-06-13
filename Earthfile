@@ -320,6 +320,47 @@ fast-check:
 # SYSTEMS LANGUAGES (C, C++, Rust, Go, Zig, etc.)
 # ============================================================================
 
+x64-nasm:
+    FROM ubuntu:24.04
+
+    DO +PREPARE_DEBIAN
+
+    RUN apt-get update && \
+        apt-get install -y nasm gcc
+
+    DO +ADD_FILES --src="leibniz_x64_nasm.asm"
+
+    RUN nasm \
+        -f elf64 \
+        leibniz_x64_nasm.asm \
+        -o leibniz.obj
+
+    RUN gcc \
+        leibniz.obj \
+        -o leibniz \
+        -m64 \
+        -no-pie
+
+    DO +BENCH \
+        --name="x64-nasm" \
+        --lang="x86-64 Assembly (NASM)" \
+        --version="nasm -v" \
+        --cmd="./leibniz"
+
+x64-nasm-alpine:
+  FROM +alpine --src="leibniz_x64_nasm.asm"
+
+  RUN apk add --no-cache nasm gcc musl-dev
+  RUN nasm -f elf64 leibniz_x64_nasm.asm -o leibniz.o
+  RUN gcc leibniz.o -o leibniz -no-pie
+
+  DO +BENCH \
+      --name="x64-nasm" \
+      --lang="x86-64 Assembly (NASM)" \
+      --version="nasm -v" \
+      --cmd="./leibniz"
+
+
 c:
   FROM +alpine --src="leibniz.c"
   RUN apk add --no-cache gcc build-base

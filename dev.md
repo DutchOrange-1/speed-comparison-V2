@@ -106,6 +106,9 @@ To automate this, I made the script,  [collect_all_data_safe.py](./collect_all_d
 python3 collect_all_data_safe.py
 ```
 
+# Adding new languges
+
+XXX
 
 # Testing
 This was to evaluate the number of max parallelism and possible failures. 
