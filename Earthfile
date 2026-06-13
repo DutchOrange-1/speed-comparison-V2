@@ -214,6 +214,86 @@ collect-data:
   BUILD +swift-simd
   BUILD +wasm
 
+collect-data-1:
+  BUILD +build
+  # Systems languages
+  BUILD +c
+  BUILD +c-clang
+  BUILD +cpp
+  BUILD +cpp-avx2
+  BUILD +cpp-clang
+  # BUILD +d
+  # BUILD +d-ldc 
+  BUILD +go
+  BUILD +nim
+  BUILD +odin
+  BUILD +rust
+  BUILD +rust-nightly
+  #BUILD +v
+  #BUILD +zig
+  # JVM languages
+  BUILD +clj
+  BUILD +groovy
+  BUILD +java
+  # BUILD +java-graalvm
+  BUILD +java-vecops
+  BUILD +kotlin
+  BUILD +scala
+  #.NET languages
+  # BUILD +cs
+  BUILD +cs-simd
+  BUILD +fs
+  # Functional languages
+  #BUILD +elixir
+  BUILD +erlang
+  #BUILD +gleam
+  BUILD +haskell
+  BUILD +ocaml
+  BUILD +chezscheme
+  BUILD +racket
+  BUILD +sbcl
+  BUILD +sbcl-simd
+
+
+collect-data-2:
+  # Scripting languages
+  BUILD +cpython
+  # BUILD +cpython-numpy
+  BUILD +cpython-numba
+  BUILD +lua
+  BUILD +luajit
+  BUILD +mypyc
+  # BUILD +octave
+  # BUILD +octave-vectorised
+  BUILD +perl
+  BUILD +php
+  BUILD +pypy
+  BUILD +r
+  BUILD +raku
+  BUILD +ruby
+  # JavaScript runtimes
+  BUILD +bunjs
+  #BUILD +deno
+  BUILD +nodejs
+  # Other compiled languages
+  BUILD +ada
+  BUILD +crystal
+  BUILD +dart
+  BUILD +dart-aot
+  BUILD +fortran
+  ##BUILD +haxe
+  BUILD +janet-compiled
+  ##BUILD +julia
+  # BUILD +objc
+  BUILD +pascal
+  BUILD +pony
+  BUILD +pony-nightly
+  BUILD +swift
+  BUILD +swift-relaxed
+  BUILD +swift-simd
+  BUILD +wasm
+
+
 all:
   BUILD +collect-data
   BUILD +analysis

@@ -49,17 +49,16 @@ The benchmark measures **single-threaded computational performance**. To keep co
 ## Used hardware
 What ever machine I have acess to, which would typically be my CPU:
 
-	12th Gen Intel(R) Core(TM) i7-12650H
-
-	Base speed:	2.30 GHz
-	Sockets:	1
-	Cores:	10
-	Logical processors:	16
-	Virtualization:	Enabled
-	L1 cache:	864 KB
-	L2 cache:	9.5 MB
-	L3 cache:	24.0 MB
-
+```
+	Architecture:                x86_64
+  	CPU op-mode(s):            32-bit, 64-bit
+  	Address sizes:             39 bits physical, 48 bits virtual
+  	Byte Order:                Little Endian
+	CPU(s):                      8
+  	On-line CPU(s) list:       0-7
+	Vendor ID:                   GenuineIntel
+  	Model name:                Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz
+```
 <!-- 
 The benchmarks run on Ubicloud standard-4 runners:
 
@@ -325,4 +324,16 @@ If you are still confused, check out [The Claude MD file](./CLAUDE.md) as it see
 To publish the data:
 ```bash
 python3 publish.py --results ./results/ --docs ./docs/
+```
+Note for those running it on their own server, when running +all, the volume of files temprarily created is around 10-15 GB. Have this open else you will run into a error. 
+<br><br>
+Also, make sure to use 
+```bash
+earthly prune
+```
+to clean up the docker containers ! I have noticed after several runs, the images can build up to about 50 GB of data. 
+<br>
+I have noticed several times, that languges would fail, as they are limited due to then umber of parallel containers, this should fix this error on smaller machines:
+```bash
+earthly config global.buildkit_max_parallelism 6
 ```
