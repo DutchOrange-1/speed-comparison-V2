@@ -16,7 +16,7 @@ COMMANDS = [
     "earthly +c",
     "earthly +swift",
     "earthly +sbcl",
-    "earthly +jvm"
+    "earthly +d"
 ]
 successful = {}
 failed = {}
