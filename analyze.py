@@ -198,10 +198,11 @@ def load_results(folder: str) -> pd.DataFrame:
             data["median"].append(round(parse_time_value(result["Median"]) * 1000, 5))
             data["max"].append(round(parse_time_value(result["Max"]) * 1000, 5))
             data["min"].append(round(parse_time_value(result["Min"]) * 1000, 5))
-            data["accuracy"].append(round(result["Accuracy"], 6))
+            data["accuracy"].append(round(result["Accuracy"]*10, 6))
 
     df = pd.DataFrame(data)
     df.sort_values(by=["min"], inplace=True, ascending=True)
+
     return df
 
 
@@ -263,10 +264,17 @@ def create_color_mapping(values: np.ndarray):
     cmap = create_accurancy_cmap()
 
     # Invert because smaller execution times are better
-    norm = LogNorm(
-        vmin=values.min(),
-        vmax=values.max(),
-    )
+    # norm = Normalize(
+    #     vmin=values.min(),
+    #     vmax=values.max(),
+    # )
+
+    norm = Normalize(vmin=values.min(), vmax=100)
+
+    # print("MAX: ", values.max())
+    # print("MIN: ", values.min())
+
+    
 
     normalized = norm(values)
 
@@ -421,7 +429,7 @@ def plot_results(
     sm.set_array([])
     cbar = fig.colorbar(sm, ax=ax, pad=0.01, aspect=30, shrink=0.6)
     cbar.set_label(
-        "π Accuracy",
+        "π Accuracy %",
         fontsize=9,
         color="#e6edf3",
         labelpad=8,
