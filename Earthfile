@@ -472,11 +472,15 @@ v:
 
 
 zig:
-  FROM alpine:edge
-  RUN apk add --no-cache hyperfine zig --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-  DO +ADD_FILES --src="leibniz.zig"
-  RUN --no-cache zig build-exe -OReleaseFast leibniz.zig
-  DO +BENCH --name="zig" --lang="Zig" --version="zig version" --cmd="./leibniz"
+  FROM ubuntu:latest
+  RUN apt-get update && \
+      apt-get install -y wget xz-utils
+
+  RUN wget https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz && \
+      tar -xf zig-x86_64-linux-0.15.2.tar.xz && \
+      mv zig-x86_64-linux-0.15.2 /opt/zig
+
+  ENV PATH="/opt/zig:${PATH}"
 
 # ============================================================================
 # JVM LANGUAGES (Java, Kotlin, Scala, Clojure, Groovy)
