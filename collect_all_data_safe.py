@@ -9,6 +9,7 @@ import sys
 # ==========================
 MAX_RETRIES = 2      # Number of retries per command
 RETRY_DELAY = 30     # Seconds between retries
+TIMEOUT = 30 * 60   # 30 minutes per attempt
 
 COMMANDS = [
     "earthly +systems",
@@ -31,12 +32,21 @@ def run_command(command):
         result = subprocess.run(
             command,
             shell=True,
-            check=False
+            check=False,
+            timeout=TIMEOUT   
         )
         return result.returncode == 0
+
+    except subprocess.TimeoutExpired:
+        print(f"\nTIMEOUT ERROR:")
+        print(f"Command took longer than {TIMEOUT/60:.0f} minutes and was killed:")
+        print(f"  {command}")
+        return False
+
     except Exception as e:
         print(f"Exception while running command: {e}")
         return False
+    
 
 def main():
     total_commands = len(COMMANDS)

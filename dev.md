@@ -105,6 +105,7 @@ To automate this, I made the script,  [collect_all_data_safe.py](./collect_all_d
 ```bash
 python3 collect_all_data_safe.py
 ```
+Another fix seems to be to just login, via **docker login** to allow for more requests. 
 
 # Adding new languges
 
