@@ -176,7 +176,7 @@ earthly config global.buildkit_max_parallelism 6
 # Testing caching 
 ## No Cach (Running systems)
 This is after 2 runs, to unsure any caching is complete. Also done with 1e3 rounds, as that is not affecting the cache. 
-```
+```bash
 Successful (4):
   ✓ earthly +c                Attempts: 1  Time: 3.1s
   ✓ earthly +swift            Attempts: 1  Time: 4.1s
@@ -191,7 +191,7 @@ Total elapsed time: 0.2 minutes
 ```
 
 ## Post Cache
-```
+```bash
 Successful (4):
   ✓ earthly +c                Attempts: 1  Time: 4.2s
   ✓ earthly +swift            Attempts: 1  Time: 4.0s
@@ -206,4 +206,34 @@ Total elapsed time: 0.3 minutes
 ```
 
 So in the end, basically the same.  I will be testing this on a larger scale. 
+
+# Optomised Cache:
+## Post optomization with 2 runs:
+### Run1:
+```bash
+Successful (3):
+  ✓ earthly +dotnet           Attempts: 1  Time: 577.4s
+  ✓ earthly +scripting        Attempts: 2  Time: 285.1s
+  ✓ earthly +other-compiled   Attempts: 2  Time: 657.4s
+
+Failed (0):
+
+================================================================================
+Total elapsed time: 1519.9 seconds
+Total elapsed time: 25.3 minutes
+```
+
+### Run 2:
+```
+Successful (3):
+  ✓ earthly +dotnet           Attempts: 1  Time: 455.1s
+  ✓ earthly +scripting        Attempts: 1  Time: 170.9s
+  ✓ earthly +other-compiled   Attempts: 1  Time: 540.9s
+
+Failed (0):
+
+================================================================================
+Total elapsed time: 1166.9 seconds
+Total elapsed time: 19.4 minutes
+```
 
