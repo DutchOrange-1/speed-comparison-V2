@@ -800,7 +800,8 @@ fortran:
   DO +BENCH --name="fortran" --lang="Fortran 90" --version="gfortran-14 --version" --cmd="./leibniz"
 
 haxe:
-  FROM ubuntu:latest
+  # FROM ubuntu:latest
+  FROM ubuntu:24.04
   DO +PREPARE_DEBIAN
   RUN apt-get update && apt-get install -y software-properties-common
   RUN add-apt-repository ppa:haxe/releases -y && apt-get update && apt-get install -y haxe neko g++
