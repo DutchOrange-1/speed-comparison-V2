@@ -8,7 +8,7 @@ import sys
 # Configuration
 # ==========================
 MAX_RETRIES = 2      # Number of retries per command
-RETRY_DELAY = 10     # Seconds between retries
+RETRY_DELAY = 30     # Seconds between retries
 
 COMMANDS = [
     "earthly +systems",
