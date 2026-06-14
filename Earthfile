@@ -149,14 +149,14 @@ collect-data:
   BUILD +cpp-avx2
   BUILD +cpp-clang
   BUILD +d
-  # BUILD +d-ldc 
+  BUILD +d-ldc 
   BUILD +go
   BUILD +nim
   BUILD +odin
   BUILD +rust
   BUILD +rust-nightly
-  #BUILD +v
-  #BUILD +zig
+  BUILD +v
+  BUILD +zig
   # JVM languages
   BUILD +clj
   BUILD +groovy
@@ -186,7 +186,7 @@ collect-data:
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  # BUILD +octave
+  BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
@@ -204,9 +204,9 @@ collect-data:
   BUILD +dart
   BUILD +dart-aot
   BUILD +fortran
-  ##BUILD +haxe
+  BUILD +haxe
   BUILD +janet-compiled
-  ##BUILD +julia
+  BUILD +julia
   BUILD +objc
   BUILD +pascal
   BUILD +pony
@@ -226,14 +226,14 @@ systems:
   BUILD +cpp-avx2
   BUILD +cpp-clang
   BUILD +d
-  # BUILD +d-ldc
+  BUILD +d-ldc
   BUILD +go
   BUILD +nim
   BUILD +odin
   BUILD +rust
   BUILD +rust-nightly
-  # BUILD +v
-  # BUILD +zig
+  BUILD +v
+  BUILD +zig
 
 jvm:
   BUILD +clj
@@ -268,7 +268,7 @@ scripting:
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  # BUILD +octave
+  BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
@@ -289,9 +289,9 @@ other-compiled:
   BUILD +dart
   BUILD +dart-aot
   BUILD +fortran
-  # BUILD +haxe
+  BUILD +haxe
   BUILD +janet-compiled
-  # BUILD +julia
+  BUILD +julia
   BUILD +objc
   BUILD +pascal
   BUILD +pony
