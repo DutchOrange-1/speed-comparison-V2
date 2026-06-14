@@ -15,7 +15,7 @@ COMMANDS = [
     # "earthly +collect-data"
     "earthly +c",
     "earthly +swift",
-    "earthly +sblc",
+    "earthly +sbcl",
     "earthly +jvm"
 ]
 successful = {}

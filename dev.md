@@ -175,10 +175,7 @@ earthly config global.buildkit_max_parallelism 6
 
 # Testing caching 
 ## No Cach (Running systems)
+This is after 2 runs, to unsure any caching is complete. Also done with 1e3 rounds, as that is not affecting the cache. 
 ```
 
 ```
-# cached
-
-
-Still need to find a way to purge the old content if needed. 
