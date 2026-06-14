@@ -177,5 +177,18 @@ earthly config global.buildkit_max_parallelism 6
 ## No Cach (Running systems)
 This is after 2 runs, to unsure any caching is complete. Also done with 1e3 rounds, as that is not affecting the cache. 
 ```
+Successful (4):
+  ✓ earthly +c                Attempts: 1  Time: 3.1s
+  ✓ earthly +swift            Attempts: 1  Time: 4.1s
+  ✓ earthly +sbcl             Attempts: 1  Time: 3.6s
+  ✓ earthly +nim              Attempts: 1  Time: 4.0s
 
+Failed (0):
+
+================================================================================
+Total elapsed time: 14.8 seconds
+Total elapsed time: 0.2 minutes
 ```
+
+## Post Cache
+

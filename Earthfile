@@ -93,7 +93,7 @@ PREPARE_DEBIAN:
 
 PREPARE_ALPINE:
   FUNCTION
-  RUN apk add --no-cache hyperfine
+  RUN apk add hyperfine
 
 ADD_FILES:
   FUNCTION
@@ -350,7 +350,7 @@ x64-nasm:
 x64-nasm-alpine:
   FROM +alpine --src="leibniz_x64_nasm.asm"
 
-  RUN apk add --no-cache nasm gcc musl-dev
+  RUN apk add nasm gcc musl-dev
   RUN nasm -f elf64 leibniz_x64_nasm.asm -o leibniz.o
   RUN gcc leibniz.o -o leibniz -no-pie
 
@@ -363,42 +363,42 @@ x64-nasm-alpine:
 
 c:
   FROM +alpine --src="leibniz.c"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add gcc build-base
   DO +SET_ARCH_FLAGS
   RUN --no-cache gcc leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="c" --lang="C (gcc)" --version="gcc --version" --cmd="./leibniz"
 
 c-clang:
   FROM +alpine --src="leibniz.c"
-  RUN apk add --no-cache clang lld build-base
+  RUN apk add clang lld build-base
   DO +SET_ARCH_FLAGS
   RUN --no-cache clang -fuse-ld=lld leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="c-clang" --lang="C (clang)" --version="clang --version" --cmd="./leibniz"
 
 cpp:
   FROM +alpine --src="leibniz.cpp"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   DO +SET_ARCH_FLAGS
   RUN --no-cache g++ leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp" --lang="C++ (g++)" --version="g++ --version" --cmd="./leibniz"
 
 cpp-avx2:
   FROM +alpine --src="leibniz_avx2.cpp"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   DO +SET_ARCH_FLAGS
   RUN --no-cache g++ leibniz_avx2.cpp -o leibniz_avx2 -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp-avx2" --lang="C++ (avx2)" --version="g++ --version" --cmd="./leibniz_avx2"
 
 cpp-clang:
   FROM +alpine --src="leibniz.cpp"
-  RUN apk add --no-cache clang lld build-base
+  RUN apk add  clang lld build-base
   DO +SET_ARCH_FLAGS
   RUN --no-cache clang++ -fuse-ld=lld leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp-clang" --lang="C++ (clang++)" --version="clang++ --version" --cmd="./leibniz"
 
 d:
   FROM +alpine --src="leibniz.d"
-  RUN apk add --no-cache gcc-gdc
+  RUN apk add  gcc-gdc
   DO +SET_ARCH_FLAGS
   RUN --no-cache gdc leibniz.d -o leibniz -O3 -frelease -static -flto -ffast-math $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="d" --lang="D (GDC)" --version="gdc --version" --cmd="./leibniz"
@@ -425,7 +425,7 @@ nim:
   # GCC options: -fno-signed-zeros -fno-trapping-math -fassociative-math allow vectorization
   # --passL:"-s" removes symbol table and relocation info (smaller binary)
   FROM +alpine --src="leibniz.nim"
-  RUN apk add --no-cache gcc build-base nim
+  RUN apk add gcc build-base nim
   DO +SET_ARCH_FLAGS
   RUN --no-cache nim c --verbosity:0 -d:danger -d:lto --gc:arc --passC:"$MARCH_FLAG -fno-signed-zeros -fno-trapping-math -fassociative-math" --passL:"-s" leibniz.nim
   DO +BENCH --name="nim" --lang="Nim" --version="nim --version" --cmd="./leibniz"
@@ -637,7 +637,7 @@ racket:
 
 sbcl:
   FROM +alpine --src="leibniz.lisp"
-  RUN apk add --no-cache sbcl
+  RUN apk add sbcl
   RUN --no-cache sbcl --noinform --load leibniz.lisp --eval '(sb-ext:save-lisp-and-die "out-sbcl" :executable t :toplevel (quote cl-user::main) :purify t)'
   DO +BENCH --name="sbcl" --lang="Common Lisp (SBCL)" --version="sbcl --version" --cmd="./out-sbcl"
 
