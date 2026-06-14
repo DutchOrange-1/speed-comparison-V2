@@ -191,4 +191,19 @@ Total elapsed time: 0.2 minutes
 ```
 
 ## Post Cache
+```
+Successful (4):
+  ✓ earthly +c                Attempts: 1  Time: 4.2s
+  ✓ earthly +swift            Attempts: 1  Time: 4.0s
+  ✓ earthly +sbcl             Attempts: 1  Time: 3.1s
+  ✓ earthly +nim              Attempts: 1  Time: 3.8s
+
+Failed (0):
+
+================================================================================
+Total elapsed time: 15.1 seconds
+Total elapsed time: 0.3 minutes
+```
+
+So in the end, basically the same.  I will be testing this on a larger scale. 
 
