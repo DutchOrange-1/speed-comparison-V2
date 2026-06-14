@@ -13,7 +13,10 @@ TIMEOUT = 60*30  # 30min per attempt
 
 COMMANDS = [
     # "earthly +collect-data"
-    "earthly +systems"
+    "earthly +c",
+    "earthly +swift",
+    "earthly +sblc",
+    "earthly +jvm"
 ]
 successful = {}
 failed = {}
