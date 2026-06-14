@@ -9,10 +9,11 @@ import sys
 # ==========================
 MAX_RETRIES = 2      # Number of retries per command
 RETRY_DELAY = 30     # Seconds between retries
-TIMEOUT = 60*120  # 2h per attempt
+TIMEOUT = 60*30  # 30min per attempt
 
 COMMANDS = [
-    "earthly +collect-data"
+    # "earthly +collect-data"
+    "earthly +systems"
 ]
 successful = {}
 failed = {}

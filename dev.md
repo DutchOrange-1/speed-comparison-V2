@@ -172,3 +172,13 @@ Ran with:
 ```bash
 earthly config global.buildkit_max_parallelism 6
 ```
+
+# Testing caching 
+## No Cach (Running systems)
+```
+
+```
+# cached
+
+
+Still need to find a way to purge the old content if needed. 
