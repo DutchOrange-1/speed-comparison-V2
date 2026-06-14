@@ -123,7 +123,6 @@ Successful (7):
   ✓ earthly +scripting        Attempts: 2  Time: 1471.6s
   ✓ earthly +javascript       Attempts: 1  Time: 76.7s
   ✓ earthly +other-compiled   Attempts: 1  Time: 703.9s
-Failed (0):
 ================================================================================
 Total elapsed time: 3850.7 seconds
 Total elapsed time: 64.2 minutes
@@ -143,7 +142,6 @@ Successful (7):
   ✓ earthly +scripting        Attempts: 1  Time: 841.4s
   ✓ earthly +javascript       Attempts: 1  Time: 69.5s
   ✓ earthly +other-compiled   Attempts: 1  Time: 139.0s
-Failed (0):
 ================================================================================
 Total elapsed time: 3469.0 seconds
 Total elapsed time: 57.8 minutes
@@ -163,7 +161,6 @@ Successful (7):
   ✓ earthly +scripting        Attempts: 1  Time: 672.3s
   ✓ earthly +javascript       Attempts: 1  Time: 16.6s
   ✓ earthly +other-compiled   Attempts: 1  Time: 135.3s
-Failed (0):
 ================================================================================
 Total elapsed time: 2763.6 seconds
 Total elapsed time: 46.1 minutes
@@ -182,9 +179,6 @@ Successful (4):
   ✓ earthly +swift            Attempts: 1  Time: 4.1s
   ✓ earthly +sbcl             Attempts: 1  Time: 3.6s
   ✓ earthly +nim              Attempts: 1  Time: 4.0s
-
-Failed (0):
-
 ================================================================================
 Total elapsed time: 14.8 seconds
 Total elapsed time: 0.2 minutes
@@ -197,9 +191,6 @@ Successful (4):
   ✓ earthly +swift            Attempts: 1  Time: 4.0s
   ✓ earthly +sbcl             Attempts: 1  Time: 3.1s
   ✓ earthly +nim              Attempts: 1  Time: 3.8s
-
-Failed (0):
-
 ================================================================================
 Total elapsed time: 15.1 seconds
 Total elapsed time: 0.3 minutes
@@ -215,25 +206,45 @@ Successful (3):
   ✓ earthly +dotnet           Attempts: 1  Time: 577.4s
   ✓ earthly +scripting        Attempts: 2  Time: 285.1s
   ✓ earthly +other-compiled   Attempts: 2  Time: 657.4s
-
-Failed (0):
-
 ================================================================================
 Total elapsed time: 1519.9 seconds
 Total elapsed time: 25.3 minutes
 ```
 
 ### Run 2:
-```
+```bash
 Successful (3):
   ✓ earthly +dotnet           Attempts: 1  Time: 455.1s
   ✓ earthly +scripting        Attempts: 1  Time: 170.9s
   ✓ earthly +other-compiled   Attempts: 1  Time: 540.9s
-
-Failed (0):
-
 ================================================================================
 Total elapsed time: 1166.9 seconds
 Total elapsed time: 19.4 minutes
 ```
+This is slightly faster, but can be due to network related reasons. 
+
+### Runs - increased cach-ing
+#### Run 3:
+```bash
+Successful (3):
+  ✓ earthly +dotnet           Attempts: 1  Time: 582.9s
+  ✓ earthly +scripting        Attempts: 2  Time: 214.2s
+  ✓ earthly +other-compiled   Attempts: 1  Time: 478.7s
+================================================================================
+Total elapsed time: 1275.8 seconds
+Total elapsed time: 21.3 minutes
+```
+Slightly slower results, this is with similar cach as the previous one. Hence due to networking.
+#### Run 4:
+This run is after all cache-ing has been done, hence should be the fastest! 
+```bash
+Successful (3):
+  ✓ earthly +dotnet           Attempts: 1  Time: 513.9s
+  ✓ earthly +scripting        Attempts: 1  Time: 159.3s
+  ✓ earthly +other-compiled   Attempts: 1  Time: 433.4s
+================================================================================
+Total elapsed time: 1106.6 seconds
+Total elapsed time: 18.4 minutes
+```
+Slight improvment, but could again be due to the netowk. 
 

@@ -1,6 +1,7 @@
 import std.stdio;
 import std.file;
 import std.conv;
+import std.string : strip;
 
 void main() {
     auto content = readText("./rounds.txt");
