@@ -12,11 +12,9 @@ RETRY_DELAY = 30     # Seconds between retries
 TIMEOUT = 60*30  # 30min per attempt
 
 COMMANDS = [
-    # "earthly +collect-data"
-    "earthly +c",
-    "earthly +swift",
-    "earthly +sbcl",
-    "earthly +nim"
+    "earthly +dotnet",
+    "earthly +scripting",
+    "earthly +other-compiled",
 ]
 successful = {}
 failed = {}
