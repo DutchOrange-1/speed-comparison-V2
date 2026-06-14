@@ -469,8 +469,6 @@ v:
   RUN --no-cache v -prod -o leibniz leibniz.v
   DO +BENCH --name="v" --lang="V" --version="v version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="./leibniz"
 
-
-
 zig:
   FROM ubuntu:latest
   RUN apt-get update && \
@@ -594,6 +592,7 @@ gleam:
   FROM ghcr.io/gleam-lang/gleam:v1.13.0-erlang-alpine
   DO +PREPARE_ALPINE
   WORKDIR /app
+  RUN gleam --version
   RUN gleam new leibniz_app && cd leibniz_app && \
       sed -i 's/\[dependencies\]/[dependencies]\nsimplifile = "~> 2.0"/' gleam.toml
   COPY +build/scmeta ./leibniz_app/
