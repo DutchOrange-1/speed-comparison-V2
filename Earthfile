@@ -459,11 +459,17 @@ v:
   FROM ubuntu:latest
   DO +PREPARE_DEBIAN
   RUN apt-get update && apt-get install -y git gcc make
-  RUN git clone --depth=1 --branch weekly.2025.50 https://github.com/vlang/v /opt/vlang && \
-      cd /opt/vlang && make && ./v symlink
+  # RUN git clone --depth=1 --branch weekly.2025.50 https://github.com/vlang/v /opt/vlang && \
+  #     cd /opt/vlang && make && ./v symlink
+  RUN git clone https://github.com/vlang/v /opt/vlang && \
+    cd /opt/vlang && \
+    make && \
+    ./v symlink
   DO +ADD_FILES --src="leibniz.v"
   RUN --no-cache v -prod -o leibniz leibniz.v
   DO +BENCH --name="v" --lang="V" --version="v version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="./leibniz"
+
+
 
 zig:
   FROM alpine:edge
