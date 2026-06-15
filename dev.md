@@ -248,3 +248,29 @@ Total elapsed time: 18.4 minutes
 ```
 Slight improvment, but could again be due to the netowk. 
 
+
+
+
+
+
+
+
+```bash
+Successful (7):
+  ✓ earthly +systems          Attempts: 1  Time: 637.4s
+  ✓ earthly +jvm              Attempts: 1  Time: 663.3s
+  ✓ earthly +dotnet           Attempts: 1  Time: 488.7s
+  ✓ earthly +functional       Attempts: 1  Time: 292.6s
+  ✓ earthly +scripting        Attempts: 2  Time: 319.0s
+  ✓ earthly +javascript       Attempts: 2  Time: 132.1s
+  ✓ earthly +other-compiled   Attempts: 2  Time: 608.3s
+
+Failed (0):
+
+================================================================================
+Total elapsed time: 3141.3 seconds
+Total elapsed time: 52.4 minutes
+```
+Slight improvement. Note that this was with 1000 runs. Which implies most of the time is spent setting the dockers up, which is a waste of time. 
+
+
