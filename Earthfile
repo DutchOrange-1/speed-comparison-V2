@@ -196,7 +196,7 @@ collect-data:
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  BUILD +octave
+ # BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
@@ -249,7 +249,7 @@ jvm:
   BUILD +clj
   BUILD +groovy
   BUILD +java
-  BUILD +java-graalvm
+ # BUILD +java-graalvm
   BUILD +java-vecops
   BUILD +kotlin
   BUILD +scala
@@ -274,11 +274,11 @@ scripting:
 
   BUILD +cpython
   # BUILD +cpython-numpy
-  BUILD +cpython-numba
+ # BUILD +cpython-numba
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  BUILD +octave
+ # BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
