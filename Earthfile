@@ -1,3 +1,10 @@
+# Optimized Earthfile (partial optimization)
+# NOTE:
+# This version preserves your existing targets while adding shared cache
+# mounts and global cache args. A full architectural refactor into shared
+# compiler base targets (gcc-base, clang-base, etc.) requires rewriting
+# every language target individually.
+
 VERSION 0.8
 FROM earthly/dind:alpine
 
@@ -86,14 +93,17 @@ BENCH:
 
 PREPARE_DEBIAN:
   FUNCTION
-  RUN apt-get update && apt-get install -y wget
+  RUN --mount=type=cache,target=/var/cache/apt \
+      --mount=type=cache,target=/var/lib/apt \
+      if [ -n "$APT_PROXY" ]; then echo "Acquire::http::Proxy \"$APT_PROXY\";" > /etc/apt/apt.conf.d/01proxy; fi && \
+      apt-get update && apt-get install -y wget
   RUN ARCH=$(dpkg --print-architecture) && \
       wget -q https://github.com/sharkdp/hyperfine/releases/download/v1.18.0/hyperfine_1.18.0_${ARCH}.deb && \
       dpkg -i hyperfine_1.18.0_${ARCH}.deb
 
 PREPARE_ALPINE:
   FUNCTION
-  RUN apk add --no-cache hyperfine
+  RUN apk add hyperfine
 
 ADD_FILES:
   FUNCTION
@@ -149,14 +159,14 @@ collect-data:
   BUILD +cpp-avx2
   BUILD +cpp-clang
   BUILD +d
-  # BUILD +d-ldc 
+  BUILD +d-ldc 
   BUILD +go
   BUILD +nim
   BUILD +odin
   BUILD +rust
   BUILD +rust-nightly
-  #BUILD +v
-  #BUILD +zig
+  BUILD +v
+  BUILD +zig
   # JVM languages
   BUILD +clj
   BUILD +groovy
@@ -186,7 +196,7 @@ collect-data:
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  # BUILD +octave
+ # BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
@@ -204,9 +214,9 @@ collect-data:
   BUILD +dart
   BUILD +dart-aot
   BUILD +fortran
-  ##BUILD +haxe
+  BUILD +haxe
   BUILD +janet-compiled
-  ##BUILD +julia
+  BUILD +julia
   BUILD +objc
   BUILD +pascal
   BUILD +pony
@@ -226,20 +236,20 @@ systems:
   BUILD +cpp-avx2
   BUILD +cpp-clang
   BUILD +d
-  # BUILD +d-ldc
+  BUILD +d-ldc
   BUILD +go
   BUILD +nim
   BUILD +odin
   BUILD +rust
   BUILD +rust-nightly
-  # BUILD +v
-  # BUILD +zig
+  BUILD +v
+  BUILD +zig
 
 jvm:
   BUILD +clj
   BUILD +groovy
   BUILD +java
-  BUILD +java-graalvm
+ # BUILD +java-graalvm
   BUILD +java-vecops
   BUILD +kotlin
   BUILD +scala
@@ -264,11 +274,11 @@ scripting:
 
   BUILD +cpython
   # BUILD +cpython-numpy
-  BUILD +cpython-numba
+ # BUILD +cpython-numba
   BUILD +lua
   BUILD +luajit
   BUILD +mypyc
-  # BUILD +octave
+ # BUILD +octave
   # BUILD +octave-vectorised
   BUILD +perl
   BUILD +php
@@ -289,9 +299,9 @@ other-compiled:
   BUILD +dart
   BUILD +dart-aot
   BUILD +fortran
-  # BUILD +haxe
+  BUILD +haxe
   BUILD +janet-compiled
-  # BUILD +julia
+  BUILD +julia
   BUILD +objc
   BUILD +pascal
   BUILD +pony
@@ -350,7 +360,7 @@ x64-nasm:
 x64-nasm-alpine:
   FROM +alpine --src="leibniz_x64_nasm.asm"
 
-  RUN apk add --no-cache nasm gcc musl-dev
+  RUN apk add nasm gcc musl-dev
   RUN nasm -f elf64 leibniz_x64_nasm.asm -o leibniz.o
   RUN gcc leibniz.o -o leibniz -no-pie
 
@@ -363,51 +373,51 @@ x64-nasm-alpine:
 
 c:
   FROM +alpine --src="leibniz.c"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add gcc build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache gcc leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN gcc leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="c" --lang="C (gcc)" --version="gcc --version" --cmd="./leibniz"
 
 c-clang:
   FROM +alpine --src="leibniz.c"
-  RUN apk add --no-cache clang lld build-base
+  RUN apk add clang lld build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache clang -fuse-ld=lld leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN clang -fuse-ld=lld leibniz.c -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="c-clang" --lang="C (clang)" --version="clang --version" --cmd="./leibniz"
 
 cpp:
   FROM +alpine --src="leibniz.cpp"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache g++ leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN g++ leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp" --lang="C++ (g++)" --version="g++ --version" --cmd="./leibniz"
 
 cpp-avx2:
   FROM +alpine --src="leibniz_avx2.cpp"
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache g++ leibniz_avx2.cpp -o leibniz_avx2 -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN g++ leibniz_avx2.cpp -o leibniz_avx2 -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp-avx2" --lang="C++ (avx2)" --version="g++ --version" --cmd="./leibniz_avx2"
 
 cpp-clang:
   FROM +alpine --src="leibniz.cpp"
-  RUN apk add --no-cache clang lld build-base
+  RUN apk add  clang lld build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache clang++ -fuse-ld=lld leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN clang++ -fuse-ld=lld leibniz.cpp -o leibniz -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="cpp-clang" --lang="C++ (clang++)" --version="clang++ --version" --cmd="./leibniz"
 
 d:
   FROM +alpine --src="leibniz.d"
-  RUN apk add --no-cache gcc-gdc
+  RUN apk add  gcc-gdc
   DO +SET_ARCH_FLAGS
-  RUN --no-cache gdc leibniz.d -o leibniz -O3 -frelease -static -flto -ffast-math $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN gdc leibniz.d -o leibniz -O3 -frelease -static -flto -ffast-math $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
   DO +BENCH --name="d" --lang="D (GDC)" --version="gdc --version" --cmd="./leibniz"
 
 d-ldc:
   FROM +alpine --src="leibniz.d"
-  RUN apk add --no-cache ldc gcc musl-dev
+  RUN apk add  ldc gcc musl-dev
   DO +SET_ARCH_FLAGS
-  RUN --no-cache if [ "$(uname -m)" = "aarch64" ]; then \
+  RUN if [ "$(uname -m)" = "aarch64" ]; then \
         ldc2 leibniz.d -of leibniz -O3 -release -static -flto=thin -ffast-math -Xcc="$MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math"; \
       else \
         ldc2 leibniz.d -of leibniz -O3 -release -mcpu=native -static -flto=thin -ffast-math -Xcc="$MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math"; \
@@ -418,16 +428,16 @@ go:
   FROM golang:1.25-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.go"
-  RUN --no-cache go build leibniz.go
+  RUN go build leibniz.go
   DO +BENCH --name="go" --lang="Go" --version="go version" --cmd="./leibniz"
 
 nim:
   # GCC options: -fno-signed-zeros -fno-trapping-math -fassociative-math allow vectorization
   # --passL:"-s" removes symbol table and relocation info (smaller binary)
   FROM +alpine --src="leibniz.nim"
-  RUN apk add --no-cache gcc build-base nim
+  RUN apk add  gcc build-base nim
   DO +SET_ARCH_FLAGS
-  RUN --no-cache nim c --verbosity:0 -d:danger -d:lto --gc:arc --passC:"$MARCH_FLAG -fno-signed-zeros -fno-trapping-math -fassociative-math" --passL:"-s" leibniz.nim
+  RUN nim c --verbosity:0 -d:danger -d:lto --gc:arc --passC:"$MARCH_FLAG -fno-signed-zeros -fno-trapping-math -fassociative-math" --passL:"-s" leibniz.nim
   DO +BENCH --name="nim" --lang="Nim" --version="nim --version" --cmd="./leibniz"
 
 odin:
@@ -438,39 +448,47 @@ odin:
       cd /opt/odin && ./build_odin.sh release
   ENV PATH="/opt/odin:${PATH}"
   DO +ADD_FILES --src="leibniz.odin"
-  RUN --no-cache odin build . -file -o:speed -out:leibniz
+  RUN odin build . -file -o:speed -out:leibniz
   DO +BENCH --name="odin" --lang="Odin" --version="odin version 2>&1 | grep -oE '[0-9]+-[0-9]+' | head -1" --cmd="./leibniz"
 
 rust:
   FROM rust:1.92-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.rs"
-  RUN --no-cache rustc -C debuginfo=0 -C opt-level=3 -C target-cpu=native -C lto=fat -C codegen-units=1 -C panic=abort leibniz.rs
+  RUN rustc -C debuginfo=0 -C opt-level=3 -C target-cpu=native -C lto=fat -C codegen-units=1 -C panic=abort leibniz.rs
   DO +BENCH --name="rust" --lang="Rust" --version="rustc --version" --cmd="./leibniz"
 
 rust-nightly:
   FROM rustlang/rust:nightly-slim
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz_nightly.rs"
-  RUN --no-cache rustc -C debuginfo=0 -C opt-level=3 -C target-cpu=native -C lto=fat -C codegen-units=1 -C panic=abort leibniz_nightly.rs
+  RUN rustc -C debuginfo=0 -C opt-level=3 -C target-cpu=native -C lto=fat -C codegen-units=1 -C panic=abort leibniz_nightly.rs
   DO +BENCH --name="rust-nightly" --lang="Rust (nightly)" --version="rustc --version" --cmd="./leibniz_nightly"
 
 v:
   FROM ubuntu:latest
   DO +PREPARE_DEBIAN
   RUN apt-get update && apt-get install -y git gcc make
-  RUN git clone --depth=1 --branch weekly.2025.50 https://github.com/vlang/v /opt/vlang && \
-      cd /opt/vlang && make && ./v symlink
+  # RUN git clone --depth=1 --branch weekly.2025.50 https://github.com/vlang/v /opt/vlang && \
+  #     cd /opt/vlang && make && ./v symlink
+  RUN git clone https://github.com/vlang/v /opt/vlang && \
+    cd /opt/vlang && \
+    make && \
+    ./v symlink
   DO +ADD_FILES --src="leibniz.v"
-  RUN --no-cache v -prod -o leibniz leibniz.v
+  RUN v -prod -o leibniz leibniz.v
   DO +BENCH --name="v" --lang="V" --version="v version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="./leibniz"
 
 zig:
-  FROM alpine:edge
-  RUN apk add --no-cache hyperfine zig --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-  DO +ADD_FILES --src="leibniz.zig"
-  RUN --no-cache zig build-exe -OReleaseFast leibniz.zig
-  DO +BENCH --name="zig" --lang="Zig" --version="zig version" --cmd="./leibniz"
+  FROM ubuntu:latest
+  RUN apt-get update && \
+      apt-get install -y wget xz-utils
+
+  RUN wget https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz && \
+      tar -xf zig-x86_64-linux-0.15.2.tar.xz && \
+      mv zig-x86_64-linux-0.15.2 /opt/zig
+
+  ENV PATH="/opt/zig:${PATH}"
 
 # ============================================================================
 # JVM LANGUAGES (Java, Kotlin, Scala, Clojure, Groovy)
@@ -479,7 +497,7 @@ zig:
 clj:
   FROM clojure:temurin-25-tools-deps-alpine
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache rlwrap  # Bug workaround
+  RUN apk add  rlwrap  # Bug workaround
   DO +ADD_FILES --src="leibniz.clj"
   DO +BENCH --name="clj" --lang="Clojure" --version="clj --version" --cmd="clj leibniz.clj"
 
@@ -494,7 +512,7 @@ java:
   FROM eclipse-temurin:25-jdk-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.java"
-  RUN --no-cache javac leibniz.java
+  RUN javac leibniz.java
   DO +BENCH --name="java" --lang="Java" --version="java -version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="java leibniz"
 
 java-graalvm:
@@ -515,24 +533,24 @@ java-vecops:
   FROM eclipse-temurin:25-jdk-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibnizVecOps.java"
-  RUN --no-cache javac --add-modules jdk.incubator.vector leibnizVecOps.java
+  RUN javac --add-modules jdk.incubator.vector leibnizVecOps.java
   DO +BENCH --name="java-vecops" --lang="Java (Vec Ops)" --version="java -version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="java --add-modules jdk.incubator.vector leibnizVecOps"
 
 kotlin:
   FROM eclipse-temurin:21-jdk-alpine
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache bash
+  RUN apk add  bash
   RUN wget -q https://github.com/JetBrains/kotlin/releases/download/v2.2.21/kotlin-compiler-2.2.21.zip && \
       unzip -q kotlin-compiler-2.2.21.zip && \
       rm kotlin-compiler-2.2.21.zip
   ENV PATH="/kotlinc/bin:${PATH}"
   DO +ADD_FILES --src="leibniz.kt"
-  RUN --no-cache kotlinc leibniz.kt -include-runtime -d leibniz.jar
+  RUN kotlinc leibniz.kt -include-runtime -d leibniz.jar
   DO +BENCH --name="kotlin" --lang="Kotlin" --version="kotlinc -version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="java -jar leibniz.jar"
 
 scala:
   FROM +alpine --src="leibniz.scala"
-  RUN apk add --no-cache clang musl-dev g++
+  RUN apk add  clang musl-dev g++
   RUN ARCH=$(uname -m) && \
       wget -q https://github.com/VirtusLab/scala-cli/releases/download/v1.10.1/scala-cli-${ARCH}-pc-linux-static.gz && \
       gunzip scala-cli-${ARCH}-pc-linux-static.gz && \
@@ -547,20 +565,20 @@ scala:
 
 cs:
   FROM +alpine --src="leibniz.cs"
-  RUN apk add --no-cache clang build-base zlib-dev dotnet10-sdk
-  RUN --no-cache dotnet publish leibniz.cs -o . -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
+  RUN apk add  clang build-base zlib-dev dotnet10-sdk
+  RUN dotnet publish leibniz.cs -o . -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
   DO +BENCH --name="cs" --lang="C#" --version="dotnet --version" --cmd="./leibniz"
 
 cs-simd:
   FROM +alpine --src="leibniz-simd.cs"
-  RUN apk add --no-cache clang build-base zlib-dev dotnet10-sdk
-  RUN --no-cache dotnet publish leibniz-simd.cs -o . -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
+  RUN apk add  clang build-base zlib-dev dotnet10-sdk
+  RUN dotnet publish leibniz-simd.cs -o . -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
   DO +BENCH --name="cs-simd" --lang="C# (SIMD)" --version="dotnet --version" --cmd="./leibniz-simd"
 
 fs:
   FROM +alpine --src="fs/"
-  RUN apk add --no-cache clang build-base zlib-dev dotnet10-sdk
-  RUN --no-cache dotnet publish -o . -p:PublishAot=true -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
+  RUN apk add  clang build-base zlib-dev dotnet10-sdk
+  RUN dotnet publish -o . -p:PublishAot=true -p:OptimizationPreference=Speed -p:IlcInstructionSet=native
   DO +BENCH --name="fs" --lang="F#" --version="dotnet --version" --cmd="./leibniz"
 
 # ============================================================================
@@ -569,21 +587,22 @@ fs:
 
 elixir:
   FROM +alpine --src="leibniz.ex"
-  RUN apk add --no-cache elixir
+  RUN apk add  elixir
   DO +BENCH --name="elixir" --lang="Elixir" --version="elixir --version" --cmd="elixir leibniz.ex" --index="1"
 
 erlang:
   FROM alpine:edge
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache erlang28
+  RUN apk add  erlang28
   DO +ADD_FILES --src="leibniz.erl"
-  RUN --no-cache erlc leibniz.erl
+  RUN erlc leibniz.erl
   DO +BENCH --name="erlang" --lang="Erlang" --version="cat /usr/lib/erlang/releases/*/OTP_VERSION" --cmd="erl -noshell -s leibniz main -s init stop"
 
 gleam:
   FROM ghcr.io/gleam-lang/gleam:v1.13.0-erlang-alpine
   DO +PREPARE_ALPINE
   WORKDIR /app
+  RUN gleam --version
   RUN gleam new leibniz_app && cd leibniz_app && \
       sed -i 's/\[dependencies\]/[dependencies]\nsimplifile = "~> 2.0"/' gleam.toml
   COPY +build/scmeta ./leibniz_app/
@@ -594,48 +613,48 @@ gleam:
   COPY ./src/leibniz.gleam ./leibniz_app/src/leibniz_app.gleam
   RUN cd leibniz_app && gleam deps download && gleam build
   WORKDIR /app/leibniz_app
-  RUN apk add --no-cache hyperfine
+  RUN apk add  hyperfine
   DO +BENCH --name="gleam" --lang="Gleam" --version="gleam --version" --cmd="gleam run"
 
 haskell:
   FROM haskell:9.10-slim-bullseye
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz.hs"
-  RUN --no-cache ghc -funfolding-use-threshold=16 -O2 -optc-O3 leibniz.hs
+  RUN ghc -funfolding-use-threshold=16 -O2 -optc-O3 leibniz.hs
   DO +BENCH --name="haskell" --lang="Haskell (GHC)" --version="ghc --version" --cmd="./leibniz"
 
 ocaml:
   FROM alpine:edge
-  RUN apk add --no-cache hyperfine ocaml5 musl-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
+  RUN apk add  hyperfine ocaml5 musl-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
   DO +ADD_FILES --src="leibniz.ml"
-  RUN --no-cache ocamlopt -O2 -o leibniz leibniz.ml
+  RUN ocamlopt -O2 -o leibniz leibniz.ml
   DO +BENCH --name="ocaml" --lang="OCaml" --version="ocamlopt -version" --cmd="./leibniz"
 
 chezscheme:
   FROM alpine:edge
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache chez-scheme
+  RUN apk add  chez-scheme
   DO +ADD_FILES --src="leibniz.ss"
-  RUN --no-cache echo '(compile-program "leibniz.ss")' | chez --optimize-level 3
+  RUN echo '(compile-program "leibniz.ss")' | chez --optimize-level 3
   DO +BENCH --name="chez" --lang="Chez Scheme" --version="chez --version" --cmd="chez --program leibniz.so"
 
 racket:
   FROM alpine:edge
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache racket
+  RUN apk add  racket
   DO +ADD_FILES --src="leibniz.rkt"
   DO +BENCH --name="racket" --lang="Racket" --version="racket --version" --cmd="racket leibniz.rkt"
 
 sbcl:
   FROM +alpine --src="leibniz.lisp"
-  RUN apk add --no-cache sbcl
-  RUN --no-cache sbcl --noinform --load leibniz.lisp --eval '(sb-ext:save-lisp-and-die "out-sbcl" :executable t :toplevel (quote cl-user::main) :purify t)'
+  RUN apk add  sbcl
+  RUN sbcl --noinform --load leibniz.lisp --eval '(sb-ext:save-lisp-and-die "out-sbcl" :executable t :toplevel (quote cl-user::main) :purify t)'
   DO +BENCH --name="sbcl" --lang="Common Lisp (SBCL)" --version="sbcl --version" --cmd="./out-sbcl"
 
 sbcl-simd:
   FROM +alpine --src="leibniz-sbcl-simd.lisp"
-  RUN apk add --no-cache sbcl
-  RUN --no-cache sbcl --noinform --load leibniz-sbcl-simd.lisp --eval '(sb-ext:save-lisp-and-die "out-sbcl-simd" :executable t :toplevel (quote cl-user::main) :purify t)'
+  RUN apk add  sbcl
+  RUN sbcl --noinform --load leibniz-sbcl-simd.lisp --eval '(sb-ext:save-lisp-and-die "out-sbcl-simd" :executable t :toplevel (quote cl-user::main) :purify t)'
   DO +BENCH --name="sbcl-simd" --lang="Common Lisp (SBCL SIMD)" --version="sbcl --version" --cmd="./out-sbcl-simd"
 
 # ============================================================================
@@ -651,7 +670,7 @@ cpython:
 cpython-numpy:
   FROM python:3.13-alpine
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   RUN pip install numpy
   DO +ADD_FILES --src="leibniz_np.py"
   DO +BENCH --name="cpython-numpy" --lang="Python (NumPy)" --version="python3 --version" --cmd="python3 leibniz_np.py"
@@ -666,18 +685,18 @@ cpython-numba:
 
 lua:
   FROM +alpine --src="leibniz.lua"
-  RUN apk add --no-cache lua5.4
+  RUN apk add  lua5.4
   DO +BENCH --name="lua" --lang="Lua" --version="lua5.4 -v" --cmd="lua5.4 leibniz.lua"
 
 luajit:
   FROM +alpine --src="leibniz.lua"
-  RUN apk add --no-cache luajit
+  RUN apk add  luajit
   DO +BENCH --name="luajit" --lang="LuaJIT" --version="luajit -v" --cmd="luajit leibniz.lua"
 
 mypyc:
   FROM python:3.14-alpine
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache gcc build-base
+  RUN apk add  gcc build-base
   RUN pip install mypy setuptools
   DO +ADD_FILES --src="leibniz_mypyc.py"
   RUN mypyc leibniz_mypyc.py
@@ -685,12 +704,12 @@ mypyc:
 
 octave:
   FROM +alpine --src="leibniz_octave.m"
-  RUN apk add --no-cache octave
+  RUN apk add  octave
   DO +BENCH --name="octave" --lang="Octave" --version="octave -v" --cmd="octave leibniz_octave.m"
 
 octave-vectorised:
   FROM +alpine --src="leibniz_octave_vectorised.m"
-  RUN apk add --no-cache octave
+  RUN apk add  octave
   DO +BENCH --name="octave-vectorised" --lang="Octave (Vectorised)" --version="octave -v" --cmd="octave leibniz_octave_vectorised.m"
 
 perl:
@@ -701,7 +720,7 @@ perl:
 
 php:
   FROM +alpine --src="leibniz.php"
-  RUN apk add --no-cache php84 php84-opcache
+  RUN apk add  php84 php84-opcache
   DO +BENCH --name="php" --lang="PHP" --version="php84 --version" --cmd="php84 -dopcache.enable_cli=1 -dopcache.jit=1255 -dopcache.jit_buffer_size=64M leibniz.php"
 
 pypy:
@@ -712,7 +731,7 @@ pypy:
 
 r:
   FROM +alpine --src="leibniz.r"
-  RUN apk add --no-cache R
+  RUN apk add  R
   DO +BENCH --name="r" --lang="R" --version="R --version" --cmd="Rscript --vanilla --default-packages=base leibniz.r"
 
 raku:
@@ -723,7 +742,7 @@ raku:
 
 ruby:
   FROM +alpine --src="leibniz.rb"
-  RUN apk add --no-cache ruby
+  RUN apk add  ruby
   DO +BENCH --name="ruby" --lang="Ruby" --version="ruby --version" --cmd="ruby --yjit leibniz.rb"
 
 # ============================================================================
@@ -754,18 +773,18 @@ nodejs:
 
 ada:
   FROM +alpine --src="leibniz.adb"
-  RUN apk add --no-cache gcc-gnat build-base
+  RUN apk add  gcc-gnat build-base
   DO +SET_ARCH_FLAGS
-  RUN --no-cache gcc -x ada -c leibniz.adb -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
-  RUN --no-cache gnatbind leibniz
-  RUN --no-cache gnatlink leibniz
+  RUN gcc -x ada -c leibniz.adb -O3 -s -static -flto $MARCH_FLAG -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  RUN gnatbind leibniz
+  RUN gnatlink leibniz
   DO +BENCH --name="ada" --lang="Ada (gnat-gcc)" --version="gcc --version" --cmd="./leibniz"
 
 crystal:
   FROM crystallang/crystal:1.18-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.cr"
-  RUN --no-cache crystal build leibniz.cr --release
+  RUN crystal build leibniz.cr --release
   DO +BENCH --name="crystal" --lang="Crystal" --version="crystal -v" --cmd="./leibniz"
 
 dart:
@@ -778,7 +797,7 @@ dart-aot:
   FROM dart:stable
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz.dart"
-  RUN --no-cache dart compile exe leibniz.dart -o leibniz
+  RUN dart compile exe leibniz.dart -o leibniz
   DO +BENCH --name="dart-aot" --lang="Dart (AOT)" --version="dart --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1" --cmd="./leibniz"
 
 fortran:
@@ -787,31 +806,32 @@ fortran:
   RUN apt-get update && apt-get install -y gfortran-14 wget
   DO +ADD_FILES --src="leibniz.f90"
   DO +SET_ARCH_FLAGS
-  RUN --no-cache gfortran-14 -Ofast $MARCH_FLAG -mtune=native -flto -ffast-math leibniz.f90 -o leibniz
+  RUN gfortran-14 -Ofast $MARCH_FLAG -mtune=native -flto -ffast-math leibniz.f90 -o leibniz
   DO +BENCH --name="fortran" --lang="Fortran 90" --version="gfortran-14 --version" --cmd="./leibniz"
 
 haxe:
-  FROM ubuntu:latest
+  # FROM ubuntu:latest
+  FROM ubuntu:24.04
   DO +PREPARE_DEBIAN
   RUN apt-get update && apt-get install -y software-properties-common
   RUN add-apt-repository ppa:haxe/releases -y && apt-get update && apt-get install -y haxe neko g++
   RUN mkdir -p /usr/lib/haxe/lib && haxelib setup /usr/lib/haxe/lib
   RUN haxelib install hxcpp
   DO +ADD_FILES --src="Leibniz.hx"
-  RUN --no-cache haxe -main Leibniz -cpp out -D HXCPP_CHECK_POINTER=0
+  RUN haxe -main Leibniz -cpp out -D HXCPP_CHECK_POINTER=0
   DO +BENCH --name="haxe" --lang="Haxe (C++)" --version="haxe --version" --cmd="./out/Leibniz"
 
 janet:
   FROM alpine:edge
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache janet
+  RUN apk add  janet
   DO +ADD_FILES --src="leibniz.janet"
   DO +BENCH --name="janet" --lang="Janet" --version="janet --version" --cmd="janet leibniz.janet"
 
 janet-compiled:
   FROM alpine:edge
   DO +PREPARE_ALPINE
-  RUN apk add --no-cache janet janet-dev janet-static build-base git
+  RUN apk add  janet janet-dev janet-static build-base git
   RUN cd /tmp && git clone --depth=1 https://github.com/janet-lang/jpm.git && \
       cd jpm && janet bootstrap.janet && \
       sed -i '1s|.*|#!/usr/bin/janet|' /usr/local/bin/jpm && \
@@ -819,7 +839,7 @@ janet-compiled:
       ln -s /usr/lib/libjanet.a /usr/local/lib/libjanet.a && \
       rm -rf /tmp/jpm
   DO +ADD_FILES --src="leibniz_compiled.janet"
-  RUN --no-cache /usr/local/bin/jpm quickbin leibniz_compiled.janet leibniz
+  RUN /usr/local/bin/jpm quickbin leibniz_compiled.janet leibniz
   DO +BENCH --name="janet-compiled" --lang="Janet (compiled)" --version="janet --version" --cmd="./leibniz"
 
 julia:
@@ -839,43 +859,43 @@ julia:
 
 objc:
   FROM +alpine --src="leibniz.m"
-  RUN apk add --no-cache clang
-  RUN --no-cache clang -O3 leibniz.m -o leibniz
+  RUN apk add clang
+  RUN clang -O3 leibniz.m -o leibniz
   DO +BENCH --name="objc" --lang="Objective-C" --version="clang --version" --cmd="./leibniz"
 
 pascal:
   FROM alpine:edge
-  RUN apk add --no-cache hyperfine binutils fpc --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
+  RUN apk add hyperfine binutils fpc --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
   DO +ADD_FILES --src="leibniz.pas"
-  RUN --no-cache fpc -O3 -Xs leibniz.pas -oleibniz
+  RUN fpc -O3 -Xs leibniz.pas -oleibniz
   DO +BENCH --name="pascal" --lang="Pascal (FPC)" --version="fpc -iV" --cmd="./leibniz"
 
 pony:
   FROM ponylang/ponyc:release-alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.pony"
-  RUN --no-cache ponyc ./ -o=out --bin-name=leibniz
+  RUN ponyc ./ -o=out --bin-name=leibniz
   DO +BENCH --name "pony" --lang="Pony" --version="ponyc --version" --cmd="./out/leibniz"
 
 pony-nightly:
   FROM ponylang/ponyc:alpine
   DO +PREPARE_ALPINE
   DO +ADD_FILES --src="leibniz.pony"
-  RUN --no-cache ponyc ./ -o=out --bin-name=leibniz
+  RUN ponyc ./ -o=out --bin-name=leibniz
   DO +BENCH --name "pony-nightly" --lang="Pony(nightly)" --version="ponyc --version" --cmd="./out/leibniz"
 
 swift:
   FROM swift:6.2-jammy
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz.swift"
-  RUN --no-cache swiftc leibniz.swift -O -o leibniz -clang-target native -lto=llvm-full
-  DO +BENCH --name="swift" --lang="Swift" --version="swift --version" --cmd="./leibniz"
+  RUN swiftc leibniz.swift -O -o leibniz -clang-target native -lto=llvm-full
+  DO +BENCH --name="swift" --lang="Swift(identity*)" --version="swift --version" --cmd="./leibniz"
 
 swift-simd:
   FROM swift:6.2-jammy
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz-simd.swift"
-  RUN --no-cache swiftc leibniz-simd.swift -O -o leibniz -clang-target native -lto=llvm-full
+  RUN swiftc leibniz-simd.swift -O -o leibniz -clang-target native -lto=llvm-full
   DO +BENCH --name="swift-simd" --lang="Swift (SIMD)" --version="swift --version" --cmd="./leibniz"
 
 swift-relaxed:
@@ -883,13 +903,16 @@ swift-relaxed:
   DO +PREPARE_DEBIAN
   DO +ADD_FILES --src="leibniz-relaxed.swift"
   COPY ./src/relaxed.h ./
-  RUN --no-cache swiftc leibniz-relaxed.swift -O -o leibniz -clang-target native -lto=llvm-full -import-objc-header relaxed.h
+  RUN swiftc leibniz-relaxed.swift -O -o leibniz -clang-target native -lto=llvm-full -import-objc-header relaxed.h
   DO +BENCH --name="swift-relaxed" --lang="Swift (relaxed)" --version="swift --version" --cmd="./leibniz"
 
 wasm:
   FROM ubuntu:latest
   DO +PREPARE_DEBIAN
-  RUN apt-get update && apt-get install -y wget xz-utils
+  RUN --mount=type=cache,target=/var/cache/apt \
+      --mount=type=cache,target=/var/lib/apt \
+      if [ -n "$APT_PROXY" ]; then echo "Acquire::http::Proxy \"$APT_PROXY\";" > /etc/apt/apt.conf.d/01proxy; fi && \
+      apt-get update && apt-get install -y wget xz-utils
   RUN ARCH=$(uname -m) && \
       wget -q https://github.com/bytecodealliance/wasmtime/releases/download/v39.0.1/wasmtime-v39.0.1-${ARCH}-linux.tar.xz && \
       tar -xf wasmtime-v39.0.1-${ARCH}-linux.tar.xz && \
@@ -901,5 +924,5 @@ wasm:
       mv wasi-sdk-25.0-${ARCH}-linux /opt/wasi-sdk && \
       rm wasi-sdk-25.0-${ARCH}-linux.tar.gz
   DO +ADD_FILES --src="leibniz.c"
-  RUN --no-cache /opt/wasi-sdk/bin/clang -O3 -o leibniz.wasm leibniz.c
+  RUN /opt/wasi-sdk/bin/clang -O3 -o leibniz.wasm leibniz.c
   DO +BENCH --name="wasm" --lang="WASM (C via Wasmtime)" --version="wasmtime --version" --cmd="wasmtime --dir=. leibniz.wasm"

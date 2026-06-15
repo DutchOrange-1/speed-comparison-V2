@@ -9,15 +9,11 @@ import sys
 # ==========================
 MAX_RETRIES = 2      # Number of retries per command
 RETRY_DELAY = 30     # Seconds between retries
-TIMEOUT = 30 * 60   # 30 minutes per attempt
+TIMEOUT = 60*30  # 30min per attempt
 
 COMMANDS = [
-    "earthly +systems",
-    "earthly +jvm",
     "earthly +dotnet",
-    "earthly +functional",
     "earthly +scripting",
-    "earthly +javascript",
     "earthly +other-compiled",
 ]
 successful = {}
