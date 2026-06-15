@@ -1,3 +1,10 @@
+# Optimized Earthfile (partial optimization)
+# NOTE:
+# This version preserves your existing targets while adding shared cache
+# mounts and global cache args. A full architectural refactor into shared
+# compiler base targets (gcc-base, clang-base, etc.) requires rewriting
+# every language target individually.
+
 VERSION 0.8
 FROM earthly/dind:alpine
 
@@ -86,7 +93,10 @@ BENCH:
 
 PREPARE_DEBIAN:
   FUNCTION
-  RUN apt-get update && apt-get install -y wget
+  RUN --mount=type=cache,target=/var/cache/apt \
+      --mount=type=cache,target=/var/lib/apt \
+      if [ -n "$APT_PROXY" ]; then echo "Acquire::http::Proxy \"$APT_PROXY\";" > /etc/apt/apt.conf.d/01proxy; fi && \
+      apt-get update && apt-get install -y wget
   RUN ARCH=$(dpkg --print-architecture) && \
       wget -q https://github.com/sharkdp/hyperfine/releases/download/v1.18.0/hyperfine_1.18.0_${ARCH}.deb && \
       dpkg -i hyperfine_1.18.0_${ARCH}.deb
@@ -899,7 +909,10 @@ swift-relaxed:
 wasm:
   FROM ubuntu:latest
   DO +PREPARE_DEBIAN
-  RUN apt-get update && apt-get install -y wget xz-utils
+  RUN --mount=type=cache,target=/var/cache/apt \
+      --mount=type=cache,target=/var/lib/apt \
+      if [ -n "$APT_PROXY" ]; then echo "Acquire::http::Proxy \"$APT_PROXY\";" > /etc/apt/apt.conf.d/01proxy; fi && \
+      apt-get update && apt-get install -y wget xz-utils
   RUN ARCH=$(uname -m) && \
       wget -q https://github.com/bytecodealliance/wasmtime/releases/download/v39.0.1/wasmtime-v39.0.1-${ARCH}-linux.tar.xz && \
       tar -xf wasmtime-v39.0.1-${ARCH}-linux.tar.xz && \
